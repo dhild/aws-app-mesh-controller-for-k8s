@@ -10,7 +10,6 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/event"
 	"sigs.k8s.io/controller-runtime/pkg/handler"
 	"sigs.k8s.io/controller-runtime/pkg/predicate"
-	"sigs.k8s.io/controller-runtime/pkg/runtime/inject"
 	"sigs.k8s.io/controller-runtime/pkg/source"
 )
 
@@ -67,18 +66,6 @@ type NotificationChannel struct {
 	destLock sync.Mutex
 }
 
-var _ inject.Stoppable = &NotificationChannel{}
-
-// InjectStopChannel is internal should be called only by the Controller.
-// It is used to inject the stop channel initialized by the ControllerManager.
-func (cs *NotificationChannel) InjectStopChannel(stop <-chan struct{}) error {
-	if cs.stop == nil {
-		cs.stop = stop
-	}
-
-	return nil
-}
-
 func (cs *NotificationChannel) String() string {
 	return fmt.Sprintf("channel source: %p", cs)
 }
@@ -96,7 +83,7 @@ func (cs *NotificationChannel) Start(
 
 	// stop should have been injected before Start was called
 	if cs.stop == nil {
-		return fmt.Errorf("must call InjectStop on Channel before calling Start")
+		cs.stop = ctx.Done()
 	}
 
 	// use default value if DestBufferSize not specified

@@ -20,8 +20,8 @@ type Validator interface {
 }
 
 // ValidatingWebhookForValidator creates a new validating Webhook.
-func ValidatingWebhookForValidator(validator Validator) *admission.Webhook {
+func ValidatingWebhookForValidator(validator Validator, scheme *runtime.Scheme) *admission.Webhook {
 	return &admission.Webhook{
-		Handler: &validatingHandler{validator: validator},
+		Handler: &validatingHandler{validator: validator, decoder: admission.NewDecoder(scheme)},
 	}
 }

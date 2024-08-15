@@ -19,6 +19,7 @@ package controllers
 import (
 	"context"
 
+	appmesh "github.com/aws/aws-app-mesh-controller-for-k8s/apis/appmesh/v1beta2"
 	"github.com/aws/aws-app-mesh-controller-for-k8s/pkg/k8s"
 	"github.com/aws/aws-app-mesh-controller-for-k8s/pkg/runtime"
 	"github.com/aws/aws-app-mesh-controller-for-k8s/pkg/virtualgateway"
@@ -29,9 +30,6 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller"
 	"sigs.k8s.io/controller-runtime/pkg/handler"
-	"sigs.k8s.io/controller-runtime/pkg/source"
-
-	appmesh "github.com/aws/aws-app-mesh-controller-for-k8s/apis/appmesh/v1beta2"
 )
 
 // NewVirtualGatewayReconciler constructs new virtualGatewayReconciler
@@ -76,7 +74,7 @@ func (r *virtualGatewayReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 func (r *virtualGatewayReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&appmesh.VirtualGateway{}).
-		Watches(&source.Kind{Type: &appmesh.Mesh{}}, r.enqueueRequestsForMeshEvents).
+		Watches(&appmesh.Mesh{}, r.enqueueRequestsForMeshEvents).
 		WithOptions(controller.Options{MaxConcurrentReconciles: 3}).
 		Complete(r)
 }

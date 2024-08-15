@@ -27,23 +27,23 @@ type enqueueRequestsForVirtualServiceEvents struct {
 }
 
 // Create is called in response to a create event
-func (h *enqueueRequestsForVirtualServiceEvents) Create(e event.CreateEvent, queue workqueue.RateLimitingInterface) {
-	h.enqueueVirtualNodesForMesh(context.Background(), queue, e.Object.(*appmesh.VirtualService).Spec.MeshRef, e.Object.(*appmesh.VirtualService))
+func (h *enqueueRequestsForVirtualServiceEvents) Create(ctx context.Context, e event.CreateEvent, queue workqueue.RateLimitingInterface) {
+	h.enqueueVirtualNodesForMesh(ctx, queue, e.Object.(*appmesh.VirtualService).Spec.MeshRef, e.Object.(*appmesh.VirtualService))
 }
 
 // Update is called in response to an update event
-func (h *enqueueRequestsForVirtualServiceEvents) Update(e event.UpdateEvent, queue workqueue.RateLimitingInterface) {
+func (h *enqueueRequestsForVirtualServiceEvents) Update(_ context.Context, e event.UpdateEvent, queue workqueue.RateLimitingInterface) {
 	// no-op
 }
 
 // Delete is called in response to a delete event
-func (h *enqueueRequestsForVirtualServiceEvents) Delete(e event.DeleteEvent, queue workqueue.RateLimitingInterface) {
+func (h *enqueueRequestsForVirtualServiceEvents) Delete(_ context.Context, e event.DeleteEvent, queue workqueue.RateLimitingInterface) {
 	// no-op
 }
 
 // Generic is called in response to an event of an unknown type or a synthetic event triggered as a cron or
 // external trigger request
-func (h *enqueueRequestsForVirtualServiceEvents) Generic(e event.GenericEvent, queue workqueue.RateLimitingInterface) {
+func (h *enqueueRequestsForVirtualServiceEvents) Generic(_ context.Context, e event.GenericEvent, queue workqueue.RateLimitingInterface) {
 	// no-op
 }
 

@@ -101,11 +101,11 @@ func (cs *NotificationChannel) Start(
 		for evt := range dst {
 			switch evt.EventType {
 			case CREATE:
-				handler.Create(event.CreateEvent{Object: evt.Object}, queue)
+				handler.Create(ctx, event.CreateEvent{Object: evt.Object}, queue)
 			case DELETE:
-				handler.Delete(event.DeleteEvent{Object: evt.OldObject}, queue)
+				handler.Delete(ctx, event.DeleteEvent{Object: evt.OldObject}, queue)
 			case UPDATE:
-				handler.Update(event.UpdateEvent{ObjectOld: evt.OldObject, ObjectNew: evt.Object}, queue)
+				handler.Update(ctx, event.UpdateEvent{ObjectOld: evt.OldObject, ObjectNew: evt.Object}, queue)
 			default:
 				_ = fmt.Errorf("Invalid Type %T", evt.EventType)
 			}

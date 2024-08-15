@@ -28,30 +28,30 @@ type enqueueRequestsForVirtualNodeEvents struct {
 }
 
 // Create is called in response to an create event
-func (h *enqueueRequestsForVirtualNodeEvents) Create(e event.CreateEvent, queue workqueue.RateLimitingInterface) {
+func (h *enqueueRequestsForVirtualNodeEvents) Create(_ context.Context, e event.CreateEvent, queue workqueue.RateLimitingInterface) {
 	// no-op
 }
 
 // Update is called in response to an update event
-func (h *enqueueRequestsForVirtualNodeEvents) Update(e event.UpdateEvent, queue workqueue.RateLimitingInterface) {
+func (h *enqueueRequestsForVirtualNodeEvents) Update(ctx context.Context, e event.UpdateEvent, queue workqueue.RateLimitingInterface) {
 	// virtualRouter reconcile depends on virtualNode is active or not.
 	// so we only need to trigger virtualRouter reconcile if virtualNode's active status changed.
 	vnOld := e.ObjectOld.(*appmesh.VirtualNode)
 	vnNew := e.ObjectNew.(*appmesh.VirtualNode)
 
 	if virtualnode.IsVirtualNodeActive(vnOld) != virtualnode.IsVirtualNodeActive(vnNew) {
-		h.enqueueVirtualRoutersForVirtualNode(context.Background(), queue, vnNew)
+		h.enqueueVirtualRoutersForVirtualNode(ctx, queue, vnNew)
 	}
 }
 
 // Delete is called in response to a delete event
-func (h *enqueueRequestsForVirtualNodeEvents) Delete(e event.DeleteEvent, queue workqueue.RateLimitingInterface) {
+func (h *enqueueRequestsForVirtualNodeEvents) Delete(_ context.Context, e event.DeleteEvent, queue workqueue.RateLimitingInterface) {
 	// no-op
 }
 
 // Generic is called in response to an event of an unknown type or a synthetic event triggered as a cron or
 // external trigger request
-func (h *enqueueRequestsForVirtualNodeEvents) Generic(e event.GenericEvent, queue workqueue.RateLimitingInterface) {
+func (h *enqueueRequestsForVirtualNodeEvents) Generic(_ context.Context, e event.GenericEvent, queue workqueue.RateLimitingInterface) {
 	// no-op
 }
 

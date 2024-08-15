@@ -28,30 +28,30 @@ type enqueueRequestsForVirtualGatewayEvents struct {
 }
 
 // Create is called in response to an create event
-func (h *enqueueRequestsForVirtualGatewayEvents) Create(e event.CreateEvent, queue workqueue.RateLimitingInterface) {
+func (h *enqueueRequestsForVirtualGatewayEvents) Create(_ context.Context, e event.CreateEvent, queue workqueue.RateLimitingInterface) {
 	// no-op
 }
 
 // Update is called in response to an update event
-func (h *enqueueRequestsForVirtualGatewayEvents) Update(e event.UpdateEvent, queue workqueue.RateLimitingInterface) {
+func (h *enqueueRequestsForVirtualGatewayEvents) Update(ctx context.Context, e event.UpdateEvent, queue workqueue.RateLimitingInterface) {
 	// gatewayRoute reconcile depends on virtualGateway is active or not.
 	// so we only need to trigger gatewayRoute reconcile if virtualGateway's active status changed.
 	vgOld := e.ObjectOld.(*appmesh.VirtualGateway)
 	vgNew := e.ObjectNew.(*appmesh.VirtualGateway)
 
 	if virtualgateway.IsVirtualGatewayActive(vgOld) != virtualgateway.IsVirtualGatewayActive(vgNew) {
-		h.enqueueGatewayRoutesForVirtualGateway(context.Background(), queue, vgNew)
+		h.enqueueGatewayRoutesForVirtualGateway(ctx, queue, vgNew)
 	}
 }
 
 // Delete is called in response to a delete event
-func (h *enqueueRequestsForVirtualGatewayEvents) Delete(e event.DeleteEvent, queue workqueue.RateLimitingInterface) {
+func (h *enqueueRequestsForVirtualGatewayEvents) Delete(_ context.Context, e event.DeleteEvent, queue workqueue.RateLimitingInterface) {
 	// no-op
 }
 
 // Generic is called in response to an event of an unknown type or a synthetic event triggered as a cron or
 // external trigger request
-func (h *enqueueRequestsForVirtualGatewayEvents) Generic(e event.GenericEvent, queue workqueue.RateLimitingInterface) {
+func (h *enqueueRequestsForVirtualGatewayEvents) Generic(_ context.Context, e event.GenericEvent, queue workqueue.RateLimitingInterface) {
 	// no-op
 }
 

@@ -18,21 +18,11 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
 )
 
-func Test_validatingHandler_InjectDecoder(t *testing.T) {
-	h := validatingHandler{
-		decoder: nil,
-	}
-	decoder := &admission.Decoder{}
-	h.InjectDecoder(decoder)
-
-	assert.Equal(t, decoder, h.decoder)
-}
-
 func Test_validatingHandler_Handle(t *testing.T) {
 	schema := runtime.NewScheme()
 	clientgoscheme.AddToScheme(schema)
 	// k8sDecoder knows k8s objects
-	decoder, _ := admission.NewDecoder(schema)
+	decoder := admission.NewDecoder(schema)
 
 	initialPod := &corev1.Pod{
 		TypeMeta: metav1.TypeMeta{
@@ -135,8 +125,9 @@ func Test_validatingHandler_Handle(t *testing.T) {
 				AdmissionResponse: admissionv1.AdmissionResponse{
 					Allowed: false,
 					Result: &metav1.Status{
-						Code:   http.StatusForbidden,
-						Reason: "oops, some error happened",
+						Code:    http.StatusForbidden,
+						Reason:  metav1.StatusReasonForbidden,
+						Message: "oops, some error happened",
 					},
 				},
 			},
@@ -232,8 +223,9 @@ func Test_validatingHandler_Handle(t *testing.T) {
 				AdmissionResponse: admissionv1.AdmissionResponse{
 					Allowed: false,
 					Result: &metav1.Status{
-						Code:   http.StatusForbidden,
-						Reason: "oops, some error happened",
+						Code:    http.StatusForbidden,
+						Reason:  metav1.StatusReasonForbidden,
+						Message: "oops, some error happened",
 					},
 				},
 			},
@@ -325,8 +317,9 @@ func Test_validatingHandler_Handle(t *testing.T) {
 				AdmissionResponse: admissionv1.AdmissionResponse{
 					Allowed: false,
 					Result: &metav1.Status{
-						Code:   http.StatusForbidden,
-						Reason: "oops, some error happened",
+						Code:    http.StatusForbidden,
+						Reason:  metav1.StatusReasonForbidden,
+						Message: "oops, some error happened",
 					},
 				},
 			},

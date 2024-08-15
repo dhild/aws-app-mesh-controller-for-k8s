@@ -12,7 +12,6 @@ import (
 	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/stretchr/testify/assert"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/runtime"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/tools/record"
 	testclient "sigs.k8s.io/controller-runtime/pkg/client/fake"
@@ -67,10 +66,9 @@ func Test_pendingMembersFinalizer_buildPendingMembersEventMessage(t *testing.T) 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ctx := context.Background()
-			k8sSchema := runtime.NewScheme()
-			clientgoscheme.AddToScheme(k8sSchema)
-			appmesh.AddToScheme(k8sSchema)
-			k8sClient := testclient.NewFakeClientWithScheme(k8sSchema)
+			k8sClient := testclient.NewFakeClient()
+			clientgoscheme.AddToScheme(k8sClient.Scheme())
+			appmesh.AddToScheme(k8sClient.Scheme())
 			eventRecorder := record.NewFakeRecorder(1)
 			m := &pendingMembersFinalizer{
 				k8sClient:     k8sClient,
@@ -183,10 +181,9 @@ func Test_pendingMembersFinalizer_findGatewayRouteMembers(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ctx := context.Background()
-			k8sSchema := runtime.NewScheme()
-			clientgoscheme.AddToScheme(k8sSchema)
-			appmesh.AddToScheme(k8sSchema)
-			k8sClient := testclient.NewFakeClientWithScheme(k8sSchema)
+			k8sClient := testclient.NewFakeClient()
+			clientgoscheme.AddToScheme(k8sClient.Scheme())
+			appmesh.AddToScheme(k8sClient.Scheme())
 			eventRecorder := record.NewFakeRecorder(1)
 			m := &pendingMembersFinalizer{
 				k8sClient:        k8sClient,
@@ -267,10 +264,9 @@ func Test_pendingMembersFinalizer_Finalize(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ctx := context.Background()
-			k8sSchema := runtime.NewScheme()
-			clientgoscheme.AddToScheme(k8sSchema)
-			appmesh.AddToScheme(k8sSchema)
-			k8sClient := testclient.NewFakeClientWithScheme(k8sSchema)
+			k8sClient := testclient.NewFakeClient()
+			clientgoscheme.AddToScheme(k8sClient.Scheme())
+			appmesh.AddToScheme(k8sClient.Scheme())
 			eventRecorder := record.NewFakeRecorder(1)
 			m := &pendingMembersFinalizer{
 				k8sClient:        k8sClient,

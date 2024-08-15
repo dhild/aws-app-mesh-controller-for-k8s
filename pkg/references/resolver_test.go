@@ -10,7 +10,6 @@ import (
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/runtime"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
 	testclient "sigs.k8s.io/controller-runtime/pkg/client/fake"
 	"sigs.k8s.io/controller-runtime/pkg/log"
@@ -87,10 +86,9 @@ func Test_defaultResolver_ResolveMeshReference(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ctx := context.Background()
-			k8sSchema := runtime.NewScheme()
-			clientgoscheme.AddToScheme(k8sSchema)
-			appmesh.AddToScheme(k8sSchema)
-			k8sClient := testclient.NewFakeClientWithScheme(k8sSchema)
+			k8sClient := testclient.NewFakeClient()
+			clientgoscheme.AddToScheme(k8sClient.Scheme())
+			appmesh.AddToScheme(k8sClient.Scheme())
 			r := NewDefaultResolver(k8sClient, logr.New(&log.NullLogSink{}))
 
 			for _, ms := range tt.env.meshes {
@@ -231,10 +229,9 @@ func Test_defaultResolver_ResolveVirtualGatewayReference(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ctx := context.Background()
-			k8sSchema := runtime.NewScheme()
-			clientgoscheme.AddToScheme(k8sSchema)
-			appmesh.AddToScheme(k8sSchema)
-			k8sClient := testclient.NewFakeClientWithScheme(k8sSchema)
+			k8sClient := testclient.NewFakeClient()
+			clientgoscheme.AddToScheme(k8sClient.Scheme())
+			appmesh.AddToScheme(k8sClient.Scheme())
 			r := NewDefaultResolver(k8sClient, logr.New(&log.NullLogSink{}))
 
 			for _, ms := range tt.env.virtualGateways {
@@ -344,10 +341,9 @@ func Test_defaultResolver_ResolveVirtualNodeReference(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ctx := context.Background()
-			k8sSchema := runtime.NewScheme()
-			clientgoscheme.AddToScheme(k8sSchema)
-			appmesh.AddToScheme(k8sSchema)
-			k8sClient := testclient.NewFakeClientWithScheme(k8sSchema)
+			k8sClient := testclient.NewFakeClient()
+			clientgoscheme.AddToScheme(k8sClient.Scheme())
+			appmesh.AddToScheme(k8sClient.Scheme())
 			r := NewDefaultResolver(k8sClient, logr.New(&log.NullLogSink{}))
 
 			for _, vn := range tt.env.virtualNodes {
@@ -457,10 +453,9 @@ func Test_defaultResolver_ResolveVirtualServiceReference(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ctx := context.Background()
-			k8sSchema := runtime.NewScheme()
-			clientgoscheme.AddToScheme(k8sSchema)
-			appmesh.AddToScheme(k8sSchema)
-			k8sClient := testclient.NewFakeClientWithScheme(k8sSchema)
+			k8sClient := testclient.NewFakeClient()
+			clientgoscheme.AddToScheme(k8sClient.Scheme())
+			appmesh.AddToScheme(k8sClient.Scheme())
 			r := NewDefaultResolver(k8sClient, logr.New(&log.NullLogSink{}))
 
 			for _, vs := range tt.env.virtualServices {
@@ -570,10 +565,9 @@ func Test_defaultResolver_ResolveVirtualRouterReference(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ctx := context.Background()
-			k8sSchema := runtime.NewScheme()
-			clientgoscheme.AddToScheme(k8sSchema)
-			appmesh.AddToScheme(k8sSchema)
-			k8sClient := testclient.NewFakeClientWithScheme(k8sSchema)
+			k8sClient := testclient.NewFakeClient()
+			clientgoscheme.AddToScheme(k8sClient.Scheme())
+			appmesh.AddToScheme(k8sClient.Scheme())
 			r := NewDefaultResolver(k8sClient, logr.New(&log.NullLogSink{}))
 
 			for _, vr := range tt.env.virtualRouters {

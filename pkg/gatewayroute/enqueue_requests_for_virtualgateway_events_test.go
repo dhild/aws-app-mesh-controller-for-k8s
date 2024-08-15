@@ -11,7 +11,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/runtime"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/util/workqueue"
 	testclient "sigs.k8s.io/controller-runtime/pkg/client/fake"
@@ -138,10 +137,9 @@ func Test_enqueueRequestsForVirtualGatewayEvents_Update(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ctx := context.Background()
-			k8sSchema := runtime.NewScheme()
-			clientgoscheme.AddToScheme(k8sSchema)
-			appmesh.AddToScheme(k8sSchema)
-			k8sClient := testclient.NewFakeClientWithScheme(k8sSchema)
+			k8sClient := testclient.NewFakeClient()
+			clientgoscheme.AddToScheme(k8sClient.Scheme())
+			appmesh.AddToScheme(k8sClient.Scheme())
 			queue := workqueue.NewRateLimitingQueue(workqueue.DefaultControllerRateLimiter())
 			h := &enqueueRequestsForVirtualGatewayEvents{
 				k8sClient: k8sClient,
@@ -153,7 +151,7 @@ func Test_enqueueRequestsForVirtualGatewayEvents_Update(t *testing.T) {
 				assert.NoError(t, err)
 			}
 
-			h.Update(tt.args.e, queue)
+			h.Update(ctx, tt.args.e, queue)
 			var gotRequests []reconcile.Request
 			queueLen := queue.Len()
 			for i := 0; i < queueLen; i++ {
@@ -309,10 +307,9 @@ func Test_enqueueRequestsForVirtualGatewayEvents_enqueueGatewayRoutesForVirtualG
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ctx := context.Background()
-			k8sSchema := runtime.NewScheme()
-			clientgoscheme.AddToScheme(k8sSchema)
-			appmesh.AddToScheme(k8sSchema)
-			k8sClient := testclient.NewFakeClientWithScheme(k8sSchema)
+			k8sClient := testclient.NewFakeClient()
+			clientgoscheme.AddToScheme(k8sClient.Scheme())
+			appmesh.AddToScheme(k8sClient.Scheme())
 			queue := workqueue.NewRateLimitingQueue(workqueue.DefaultControllerRateLimiter())
 			h := &enqueueRequestsForVirtualGatewayEvents{
 				k8sClient: k8sClient,

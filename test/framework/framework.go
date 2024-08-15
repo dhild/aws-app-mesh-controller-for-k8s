@@ -66,12 +66,13 @@ func New(options Options) *Framework {
 		cache.Start(currContext)
 	}()
 	cache.WaitForCacheSync(currContext)
-	realClient, err := client.New(restCfg, client.Options{Scheme: k8sSchema})
-	Expect(err).NotTo(HaveOccurred())
-	k8sClient, err := client.NewDelegatingClient(client.NewDelegatingClientInput{
-		CacheReader: cache,
-		Client:      realClient,
+	k8sClient, err := client.New(restCfg, client.Options{
+		Scheme: k8sSchema,
+		Cache: &client.CacheOptions{
+			Reader: cache,
+		},
 	})
+	Expect(err).NotTo(HaveOccurred())
 	Expect(err).NotTo(HaveOccurred())
 
 	cloud, err := aws.NewCloud(aws.CloudConfig{

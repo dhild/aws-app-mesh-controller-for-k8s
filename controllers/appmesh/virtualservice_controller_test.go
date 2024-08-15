@@ -10,7 +10,6 @@ import (
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/runtime"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/tools/record"
 	testclient "sigs.k8s.io/controller-runtime/pkg/client/fake"
@@ -58,10 +57,9 @@ func Test_virtualServiceReconciler_reconcile(t *testing.T) {
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()
 			vsResManager := mock_virtualservice.NewMockResourceManager(ctrl)
-			k8sSchema := runtime.NewScheme()
-			clientgoscheme.AddToScheme(k8sSchema)
-			appmesh.AddToScheme(k8sSchema)
-			k8sClient := testclient.NewFakeClientWithScheme(k8sSchema)
+			k8sClient := testclient.NewFakeClient()
+			clientgoscheme.AddToScheme(k8sClient.Scheme())
+			appmesh.AddToScheme(k8sClient.Scheme())
 
 			err := k8sClient.Create(ctx, tt.args.vs.DeepCopy())
 			assert.NoError(t, err)

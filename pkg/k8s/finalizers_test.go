@@ -8,7 +8,6 @@ import (
 	"github.com/google/go-cmp/cmp"
 	"github.com/stretchr/testify/assert"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/runtime"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
 	testclient "sigs.k8s.io/controller-runtime/pkg/client/fake"
 	"sigs.k8s.io/controller-runtime/pkg/log"
@@ -174,10 +173,9 @@ func Test_defaultFinalizerManager_AddFinalizers(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ctx := context.Background()
-			k8sSchema := runtime.NewScheme()
-			clientgoscheme.AddToScheme(k8sSchema)
-			appmesh.AddToScheme(k8sSchema)
-			k8sClient := testclient.NewFakeClientWithScheme(k8sSchema)
+			k8sClient := testclient.NewFakeClient()
+			clientgoscheme.AddToScheme(k8sClient.Scheme())
+			appmesh.AddToScheme(k8sClient.Scheme())
 			m := NewDefaultFinalizerManager(k8sClient, logr.New(&log.NullLogSink{}))
 
 			err := k8sClient.Create(ctx, tt.args.obj.DeepCopy())
@@ -312,10 +310,9 @@ func Test_defaultFinalizerManager_RemoveFinalizers(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ctx := context.Background()
-			k8sSchema := runtime.NewScheme()
-			clientgoscheme.AddToScheme(k8sSchema)
-			appmesh.AddToScheme(k8sSchema)
-			k8sClient := testclient.NewFakeClientWithScheme(k8sSchema)
+			k8sClient := testclient.NewFakeClient()
+			clientgoscheme.AddToScheme(k8sClient.Scheme())
+			appmesh.AddToScheme(k8sClient.Scheme())
 			m := NewDefaultFinalizerManager(k8sClient, logr.New(&log.NullLogSink{}))
 
 			err := k8sClient.Create(ctx, tt.args.obj.DeepCopy())
